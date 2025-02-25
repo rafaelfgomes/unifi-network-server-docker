@@ -1,7 +1,7 @@
 services:
   unifi-network-application:
     image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-application
+    container_name: unifi-network-server
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
