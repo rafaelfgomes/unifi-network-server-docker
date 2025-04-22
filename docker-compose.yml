@@ -17,8 +17,8 @@ services:
     restart: unless-stopped
     ports:
       - ${WEBUI_PORT:-8443}:8443
-      - ${STUN_PORT:-3478/udp}:3478/udp
-      - ${ACCESSPOINT_DISCOVERY_PORT:-10001/udp}:10001/udp
+      - ${STUN_PORT:-3478}/udp:3478/udp
+      - ${ACCESSPOINT_DISCOVERY_PORT:-10001}/udp:10001/udp
       - ${DEVICE_COMMUNICATION_PORT:-8080}:8080
     networks:
       - net
