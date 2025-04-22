@@ -8,10 +8,10 @@ services:
       - TZ=${TIMEZONE}
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASS=${MONGO_PASS}
-      - MONGO_HOST=unifi-db
-      - MONGO_PORT=${MONGO_PORT:-27017}:27017
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT:-27017}
       - MONGO_DBNAME=${MONGO_DBNAME}
-      - MONGO_AUTHSOURCE=admin
+      - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
       - ./config:/config
     restart: unless-stopped
@@ -22,29 +22,6 @@ services:
       - ${DEVICE_COMMUNICATION_PORT:-8080}:8080
     networks:
       - net
-
-  unifi-db:
-    image: mongo
-    container_name: unifi-db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_USER=${MONGO_USER}
-      - MONGO_PASS=${MONGO_PASS}
-      - MONGO_DBNAME=${MONGO_DBNAME}
-      - MONGO_AUTHSOURCE=admin
-    volumes:
-      - data:/data/db
-      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
-    restart: always
-    ports:
-      - ${MONGO_PORT:-27017}:27017
-    networks:
-      - net
-
-volumes:
-  data:
-    name: mongo-unifi-data
 
 networks:
   net:
