@@ -7,6 +7,8 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TIMEZONE}
+      - LANG=${LANGUAGE:-en_US.UTF-8}
+      - LANGUAGE=${LANGUAGE:-en_US.UTF-8}
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASS=${MONGO_PASS}
       - MONGO_HOST=${MONGO_HOST:-unifi-db}
