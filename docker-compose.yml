@@ -1,7 +1,8 @@
 services:
-  unifi-network-server:
-    image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-server
+  unifi-network-application:
+    image: lscr.io/linuxserver/unifi-network-application
+    container_name: unifi-network-application
+    hostname: unifi-network-application
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -13,7 +14,7 @@ services:
       - MONGO_DBNAME=${MONGO_DBNAME:-unifi}
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
-      - config:/config
+      - ${CONFIG_FOLDER:-./config}:/config
     restart: unless-stopped
     ports:
       - ${WEBUI_PORT:-8443}:8443
@@ -42,11 +43,8 @@ services:
 
 networks:
   net:
-    name: unifi-network-app-net
     external: false
 
 volumes:
   db-data:
     name: unifi-db-data
-  config:
-    name: unifi-config
