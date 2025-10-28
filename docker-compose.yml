@@ -38,7 +38,32 @@ services:
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
       - db-data:/data/db
-      - ./scripts/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+    entrypoint: >
+      bash -c "
+        cat > /docker-entrypoint-initdb.d/init-mongo.sh <<'SCRIPT'
+        #!/bin/bash
+        if which mongosh > /dev/null 2>&1; then
+          mongo_init_bin='mongosh'
+        else
+          mongo_init_bin='mongo'
+        fi
+        \"\$$mongo_init_bin\" <<EOF
+        use \$$MONGO_AUTHSOURCE
+        db.auth(\"\$$MONGO_INITDB_ROOT_USERNAME\", \"\$$MONGO_INITDB_ROOT_PASSWORD\")
+        db.createUser({
+          user: \"\$$MONGO_USER\",
+          pwd: \"\$$MONGO_PASS\",
+          roles: [
+            { db: \"\$$MONGO_DBNAME\", role: \"dbOwner\" },
+            { db: \"\$$MONGO_DBNAME_stat\", role: \"dbOwner\" },
+            { db: \"\$$MONGO_DBNAME_audit\", role: \"dbOwner\" }
+          ]
+        })
+        EOF
+        SCRIPT
+        chmod +x /docker-entrypoint-initdb.d/init-mongo.sh &&
+        exec docker-entrypoint.sh mongod
+      "
     restart: unless-stopped
     networks:
       - net
