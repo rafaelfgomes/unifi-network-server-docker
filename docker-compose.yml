@@ -37,31 +37,8 @@ services:
       - MONGO_DBNAME=${MONGO_DBNAME:-unifi}
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
-      - db-data:/data/db
-    command: >
-      bash -c '
-        echo "#!/bin/bash" > /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "if which mongosh > /dev/null 2>&1; then" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  mongo_init_bin=mongosh" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "else" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  mongo_init_bin=mongo" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "fi" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "\"\$$mongo_init_bin\" <<EOF" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "use \$$MONGO_AUTHSOURCE" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "db.auth(\"\$$MONGO_INITDB_ROOT_USERNAME\", \"\$$MONGO_INITDB_ROOT_PASSWORD\")" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "db.createUser({" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  user: \"\$$MONGO_USER\"," >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  pwd: \"\$$MONGO_PASS\"," >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  roles: [" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "    { db: \"\$$MONGO_DBNAME\", role: \"dbOwner\" }," >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "    { db: \"\$$MONGO_DBNAME_stat\", role: \"dbOwner\" }," >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "    { db: \"\$$MONGO_DBNAME_audit\", role: \"dbOwner\" }" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "  ]" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "})" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        echo "EOF" >> /docker-entrypoint-initdb.d/init-mongo.sh &&
-        chmod +x /docker-entrypoint-initdb.d/init-mongo.sh &&
-        exec docker-entrypoint.sh mongod
-      '
+      - ${DB_DATA_FOLDER:-./db}:/data/db
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     restart: unless-stopped
     networks:
       - net
@@ -69,7 +46,3 @@ services:
 networks:
   net:
     external: false
-
-volumes:
-  db-data:
-    name: unifi-db-data
