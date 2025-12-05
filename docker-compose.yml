@@ -16,7 +16,7 @@ services:
       - MONGO_DBNAME=${MONGO_DBNAME:-unifi}
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
-      - ${CONFIG_FOLDER:-./config}:/config
+      - config:/config
     restart: unless-stopped
     ports:
       - ${WEBUI_PORT:-8443}:8443
@@ -37,11 +37,17 @@ services:
       - MONGO_DBNAME=${MONGO_DBNAME:-unifi}
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
-      - ${DB_DATA_FOLDER:-./db}:/data/db
+      - db:/data/db
       - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     restart: unless-stopped
     networks:
       - net
+
+volumes:
+  config:
+    name: unifi-network-application-config
+  db:
+    name: unifi-network-application-db
 
 networks:
   net:
