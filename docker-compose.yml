@@ -27,7 +27,9 @@ services:
       - net
 
   unifi-db:
-    image: docker.io/mongo:8.0.15
+    build:
+      context: .
+      dockerfile: Dockerfile.mongo
     container_name: unifi-db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-root}
@@ -38,7 +40,6 @@ services:
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
       - db:/data/db
-      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     restart: unless-stopped
     networks:
       - net
