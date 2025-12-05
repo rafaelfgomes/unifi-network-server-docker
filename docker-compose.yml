@@ -1,6 +1,6 @@
 services:
   unifi-network-application:
-    image: lscr.io/linuxserver/unifi-network-application
+    image: linuxserver/unifi-network-application
     container_name: unifi-network-application
     hostname: unifi-network-application
     environment:
@@ -38,7 +38,7 @@ services:
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
       - db:/data/db
-      - ${MONGO_INIT_FILE}:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - $PWD/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     restart: unless-stopped
     networks:
       - net
