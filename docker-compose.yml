@@ -38,7 +38,7 @@ services:
       - MONGO_AUTHSOURCE=${MONGO_AUTHSOURCE:-admin}
     volumes:
       - db:/data/db
-      - $PWD/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - ./entrypoint:/docker-entrypoint-initdb.d
     restart: unless-stopped
     networks:
       - net
